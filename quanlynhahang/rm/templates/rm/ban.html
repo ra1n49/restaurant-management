@@ -1,0 +1,180 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1 {
+        text-align: center;
+    }
+
+    .search-form {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .search-form input {
+        padding: 8px;
+        width: 250px;
+        font-size: 1rem;
+    }
+
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 1rem;
+        margin-left: 10px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .search-form button:hover {
+        background-color: #45a049;
+    }
+
+    .table-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px;
+    }
+
+    .table-item {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .table-item:hover {
+        transform: scale(1.05);
+    }
+
+    .table-item h3 {
+        margin-bottom: 10px;
+    }
+
+    .table-item button {
+        padding: 8px 16px;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .table-item button:hover {
+        background-color: #0056b3;
+    }
+
+    .table-item a {
+        display: inline-block;
+        margin-top: 10px;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .table-item a:hover {
+        text-decoration: underline;
+    }
+
+    .table-item form {
+        display: inline;
+    }
+</style>
+
+<br>
+<h1>Danh Sách Bàn</h1>
+
+<div class="search-form">
+    <form method="get" action="{% url 'search_ban_view' %}">
+        <input type="text" name="q" placeholder="Tìm kiếm bàn" value="{{ query }}" style="width: 300px;">
+        <button type="submit">Tìm kiếm</button>
+    </form>
+</div>
+
+{% if user.chucvu == 'admin' %}
+    <a href="{% url 'add_ban' %}" class="add-button">Thêm Bàn</a>
+    <div class="table-container">
+        {% for ban in ban_items %}
+            <div class="table-item">
+                <h3>{{ ban.banso }}</h3>
+                <p>{{ ban.tinhtrangban|yesno:"Đang Sử Dụng,Trống" }}</p>
+                <div>
+                    {% if ban.tinhtrangban %}
+                        <a href="{% url 'order_detail' ban.id %}">Xem Order</a>
+                    {% endif %}
+                    <a href="{% url 'edit_ban' ban.id %}">Sửa</a> 
+                    <form method="POST" action="{% url 'delete_ban' ban.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Bạn có chắc muốn xóa bàn này?')">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% elif user.chucvu == 'quanly'  %}
+    <div class="table-container">
+        {% for ban in ban_items %}
+            <div class="table-item">
+                <h3>{{ ban.banso }}</h3>
+                <p>{{ ban.tinhtrangban|yesno:"Đang Sử Dụng,Trống" }}</p>
+                <div>
+                    {% if not ban.tinhtrangban %}
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="ban_id" value="{{ ban.id }}">
+                            <button type="submit">Mở Bàn</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'order_detail' ban.id %}">Xem Order</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% elif user.chucvu == 'phucvu' %}
+    <div class="table-container">
+        {% for ban in ban_items %}
+            <div class="table-item">
+                <h3>{{ ban.banso }}</h3>
+                <p>{{ ban.tinhtrangban|yesno:"Đang Sử Dụng,Trống" }}</p>
+                <div>
+                    {% if nhanvien_trong_ca %}
+                        {% if not ban.tinhtrangban %}
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="ban_id" value="{{ ban.id }}">
+                                <button type="submit">Mở Bàn</button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'order_detail' ban.id %}">Xem Order</a>
+                        {% endif %}
+                    {% endif %}
+                    
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="table-container">
+        {% for ban in ban_items %}
+            <div class="table-item">
+                <h3>{{ ban.banso }}</h3>
+                <p>{{ ban.tinhtrangban|yesno:"Đang Sử Dụng,Trống" }}</p>
+                <div>
+                    {% if nhanvien_trong_ca %}
+                        {% if ban.tinhtrangban %}
+                            <a href="{% url 'order_detail' ban.id %}">Xem Order</a>
+                        {% endif %}  
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock content %}

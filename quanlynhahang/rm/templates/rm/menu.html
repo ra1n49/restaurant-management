@@ -1,0 +1,180 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1 {
+        text-align: center;
+        font-size: 30px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .search-form {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .search-form input {
+        padding: 8px;
+        width: 250px;
+        font-size: 1rem;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 1rem;
+        margin-left: 10px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .search-form button:hover {
+        background-color: #45a049;
+    }
+
+    .add-menu {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+
+    .add-menu:hover {
+        background-color: #0056b3;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    ul li {
+        background-color: #f9f9f9;
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    ul li h2 {
+        font-size: 24px;
+        color: #333;
+    }
+
+    ul li p {
+        font-size: 16px;
+        color: #555;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+
+    .available {
+        color: green;
+    }
+
+    .out-of-stock {
+        color: red;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .combo-section {
+        background-color: #f0f8ff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .combo-section h2 {
+        font-size: 24px;
+        color: #333;
+    }
+
+    .combo-section ul {
+        padding-left: 20px;
+    }
+
+    .combo-section ul li {
+        font-size: 16px;
+        margin: 5px 0;
+    }
+
+    .combo-section h3 {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+    }
+
+</style>
+
+<h1>Menu</h1>
+
+<div class="search-form">
+    <form method="get" action="{% url 'search_menu_view' %}">
+        <input type="text" name="q" placeholder="Tìm kiếm món ăn" value="{{ query }}">
+        <button type="submit">Tìm kiếm</button>
+    </form>
+</div>
+
+{% if user.chucvu == 'admin' %}
+    <a href="{% url 'add_menu_view' %}" class="add-menu">Thêm Món ăn mới</a>
+{% endif %}
+
+<ul>
+    {% for item in menu_items %}
+    <li>
+        <h2>{{ item.ten }}</h2>
+        <p><strong>Loại món:</strong> {{ item.get_mota_display }}</p>
+        <p><strong>Giá:</strong> {{ item.gia }} VNĐ</p>
+        <p><strong>Chi phí:</strong> {{ item.chi_phi }} VNĐ</p>
+        <p><strong>Lợi nhuận:</strong> {{ item.loinhuanmon }} VNĐ</p>
+        <p><strong>Trạng thái:</strong> 
+            <span class="status {% if item.tinhtrang %}available{% else %}out-of-stock{% endif %}">
+                {% if item.tinhtrang %} Còn {% else %} Hết món {% endif %}
+            </span>
+        </p>
+        {% if user.chucvu == 'admin' %}
+        <a href="{% url 'edit_menu_view' item.id %}">Sửa</a> / 
+        <a href="{% url 'delete_menu_view' item.id %}" onclick="return confirm('Bạn có chắc muốn xóa món này không?')">Xóa</a>
+        {% elif user.chucvu == 'quanly' %}
+        <a href="{% url 'edit_menu_view' item.id %}">Sửa</a>
+        {% elif user.chucvu == 'bep' %}
+        <a href="{% url 'edit_menu_view' item.id %}">Sửa</a>
+     {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% if combo %}
+<div class="combo-section">
+    <h2>Combo có lợi nhuận tối ưu</h2>
+    <ul>
+        {% for item in combo %}
+        <li>
+            <strong>{{ item.ten }}</strong> - Giá: {{ item.gia }} VNĐ - Chi phí: {{ item.chi_phi }} VNĐ
+        </li>
+        {% endfor %}
+    </ul>
+    <h3>Tổng lợi nhuận: {{ loi_nhuan }} VNĐ</h3>
+</div>
+{% endif %}
+{% endblock content %}

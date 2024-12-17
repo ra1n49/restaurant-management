@@ -1,0 +1,69 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1 {
+        text-align: center;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .confirmation-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .confirmation-container p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .confirmation-container button,
+    .confirmation-container a {
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .confirmation-container button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .confirmation-container button:hover {
+        background-color: #c82333;
+    }
+
+    .confirmation-container a {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .confirmation-container a:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<br>  
+<div class="confirmation-container">
+    <h1>Xác nhận xóa ca làm việc</h1>
+
+    <p>Bạn có chắc chắn muốn xóa ca làm việc của nhân viên <strong>{{ ca.nhanvien.get_full_name }}</strong> vào ngày <strong>{{ ca.ngay }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Xóa</button>
+        <a href="{% url 'calamviec' %}">Hủy</a>
+    </form>
+</div>
+
+{% endblock content %}

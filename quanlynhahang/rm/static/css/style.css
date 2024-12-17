@@ -1,0 +1,180 @@
+/* Định dạng cho thanh điều hướng */
+.navbar {
+    background-color: #333; /* Đảm bảo màu nền đồng nhất */
+    padding: 10px 0;
+    display: flex; /* Sử dụng Flexbox */
+    justify-content: center; /* Căn giữa các item */
+    align-items: center; /* Căn chỉnh các item theo chiều dọc */
+}
+  
+.navbar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Đặt các item trong danh sách trên cùng 1 hàng */
+}
+  
+.navbar-item {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block; /* Các item sẽ nằm trên cùng một hàng */
+    transition: background-color 0.3s ease;
+}
+  
+/* Thêm hiệu ứng hover */
+.navbar-item:hover {
+    background-color: #575757;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #333;
+    margin: 20px 0;
+}
+
+.search-form {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.search-form input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-form input[type="text"]:focus {
+    border-color: #007bff;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+    background-color: #45a049;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1rem;
+    color: #555;
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+strong {
+    font-weight: 600;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.status.available {
+    color: green;
+}
+
+.status.out-of-stock {
+    color: red;
+}
+
+.add-menu {
+    display: block;
+    text-align: center;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.add-menu:hover {
+    background-color: #0056b3;
+}
+
+.combo-section {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.combo-section h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.combo-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.combo-section li {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 10px 0;
+}
+
+.combo-section strong {
+    color: #007bff;
+}
+/* Tránh thay đổi navbar hoặc phần tử con */

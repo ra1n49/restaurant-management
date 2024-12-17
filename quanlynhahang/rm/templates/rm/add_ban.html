@@ -1,0 +1,15 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+  <h1>Thêm Bàn Mới</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <button type="submit" class="btn btn-primary">Thêm Bàn</button>
+  </form>
+
+  <br>
+  <a href="{% url 'ban_view' %}">Quay lại danh sách bàn</a>
+{% endblock %}

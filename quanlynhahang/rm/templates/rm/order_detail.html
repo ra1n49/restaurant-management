@@ -1,0 +1,209 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1, h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+        background-color: #e6f7ff;
+    }
+
+    .info-box {
+        margin: 20px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-box p {
+        margin: 10px 0;
+        font-size: 1.2rem;
+    }
+
+    .info-box strong {
+        font-weight: bold;
+    }
+
+    .total-info {
+        background-color: #d4edda;
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .total-info p {
+        font-size: 1.2rem;
+        margin: 5px 0;
+    }
+
+    .total-info p span {
+        font-weight: bold;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #007bff;
+        font-size: 1rem;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .update-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .update-btn:hover {
+        background-color: #45a049;
+    }
+
+    .alert {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+</style>
+
+<h1>Chi tiết đơn hàng cho bàn {{ ban.banso }}</h1>
+
+<div class="info-box">
+    <p><strong>Hóa đơn số:</strong> {{ order.id }}</p>
+    {% if user.chucvu == 'quanly' or user.chucvu == 'phucvu' %}
+        <p><strong>Khách hàng:</strong> {{ order.tenKhach }}</p>
+        <a href="{% url 'update_order_customer' order.id %}">Cập nhật tên khách hàng</a>
+    {% else %}
+        <p><strong>Khách hàng:</strong> {{ order.tenKhach }}</p>
+    {% endif %}
+    <p><strong>Ngày:</strong> {{ order.ngay }}</p>
+    <p><strong>Nhân viên phục vụ:</strong> {{ order.nhanvien_phucvu.get_full_name }}</p>
+    <p><strong>Tình trạng thanh toán:</strong> {% if order.tinhtrang %} Đã thanh toán {% else %} Chưa thanh toán {% endif %}</p>
+</div>
+
+<h2>Danh sách món ăn:</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Tên món</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Thành tiền</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in chi_tiet_order %}
+            <tr>
+                <td>{{ item.menu_item.ten }}</td>
+                <td>{{ item.soluong }}</td>
+                <td>{{ item.gia }} VNĐ</td>
+                <td>{{ item.thanh_tien }} VNĐ</td>
+                <td>{{ item.get_tinhtrang_display }}</td>
+                <td>
+                    {% if request.user.chucvu == 'bep' and item.tinhtrang == 'chua_len' %}
+                        <button class="update-btn" data-id="{{ item.id }}">Đánh dấu "Đã lên món"</button>
+                    {% elif request.user.chucvu == 'quanly' and item.tinhtrang == 'da_len' %}
+                        <button class="update-btn" data-id="{{ item.id }}">Đánh dấu "Đã nhận món"</button>
+                    {% elif request.user.chucvu == 'phucvu' and item.tinhtrang == 'da_len' %}
+                        <button class="update-btn" data-id="{{ item.id }}">Đánh dấu "Đã nhận món"</button>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="total-info">
+    <p><strong>Tổng tiền:</strong> {{ order.tongtien }} VNĐ</p>
+</div>
+
+{% if user.chucvu == 'quanly' or user.chucvu == 'phucvu' %}
+    <h2>Thêm món ăn</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Thêm món</button>
+    </form>
+
+    {% if not order.tinhtrang %}
+        <form method="POST" action="{% url 'thanh_toan' order.id %}">
+            {% csrf_token %}
+            <button type="submit">Thanh toán</button>
+        </form>
+    {% else %}
+        <p>Đơn hàng đã được thanh toán.</p>
+    {% endif %}
+{% endif %}
+
+{% if messages %}
+    <div class="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<script>
+document.querySelectorAll('.update-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const chiTietOrderId = this.dataset.id;
+
+        fetch(`/update-tinhtrang/${chiTietOrderId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.success);
+                location.reload(); 
+            } else {
+                alert(data.error);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock content %}

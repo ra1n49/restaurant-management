@@ -1,0 +1,106 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1 {
+        text-align: center;
+        font-size: 32px;
+        color: #333;
+        margin: 20px 0;
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 24px;
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    .search-form {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .search-form input {
+        width: 300px;
+        padding: 8px;
+        margin-right: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .search-form button {
+        padding: 8px 16px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .search-form button:hover {
+        background-color: #0056b3;
+    }
+
+    .order-item {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        margin: 15px 0;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-item h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .order-item p {
+        font-size: 16px;
+        margin: 5px 0;
+        color: #555;
+    }
+
+    .order-item a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .order-item a:hover {
+        text-decoration: underline;
+    }
+
+</style>
+
+<h1>Doanh Thu</h1>
+
+<div class="search-form">
+    <form method="get" action="{% url 'search_order_detail_dapaid' %}">
+        <input type="text" name="q" placeholder="Tìm kiếm hóa đơn" value="{{ query }}">
+        <button type="submit">Tìm kiếm</button>
+    </form>
+</div>
+
+<h2>Báo cáo doanh thu: {{total_loinhuan}} </h2>
+
+<div class="orders-list">
+    {% for order in orders %}
+        <div class="order-item">
+            <a href="{% url 'order_detail_dapaid' order.id %}">
+                <h2><strong>Hóa đơn {{ order.id }} - Khách:</strong> {{ order.tenKhach }}</h2>
+            </a>
+            <p><strong>Ngày tạo hóa đơn:</strong> {{ order.ngay }}</p>
+            <p><strong>Bàn:</strong> {{ order.ban.banso }}</p>
+            <p><strong>Tình trạng:</strong> Đã thanh toán</p>
+            <p><strong>Ngày thanh toán:</strong> {{ order.ngay_thanh_toan }}</p>
+            <p><strong>Nhân viên phục vụ:</strong> {{ order.nhanvien_phucvu }}</p>
+            <p><strong>Tổng tiền:</strong> {{ order.tongtien }}</p>
+            <p><strong>Lợi nhuận:</strong> {{ order.loinhuan }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,82 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1 {text-align: center;}
+    table {
+        width: 80%;
+        margin: 0 auto;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+
+</style>
+
+<br>  
+<h1>Danh sách ca làm việc</h1>
+{% if user.chucvu == 'admin' or user.chucvu == 'quanly' %}
+    <a href="{% url 'them_ca_lam_viec' %}" class="btn btn-primary" style="margin-bottom: 20px;">Thêm Ca Làm Việc</a>
+{% endif %}
+<table>
+    <thead>
+        <tr>
+            <th>Nhân viên</th>
+            <th>Ngày</th>
+            <th>Ca</th>
+            {% if user.chucvu == 'bep' or user.chucvu == 'phucvu' %}
+            <th>Giờ vào</th>
+            <th>Giờ ra</th>
+            {% endif %}
+            {% if user.chucvu == 'admin' or user.chucvu == 'quanly' %}
+                <th>Hành động</th>  
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for ca in calamviec %}
+            <tr>
+                <td>{{ ca.nhanvien.get_full_name }}</td>
+                <td>{{ ca.ngay }}</td>
+                <td>{{ ca.get_ca_display }}</td>
+                {% if user.chucvu == 'bep' or user.chucvu == 'phucvu' %}
+                    <td>
+                        {% if ca.giovao %}
+                            {{ ca.giovao|date:"H:i:s d/m/Y" }} 
+                        {% else %}
+                            <a href="{% url 'cham_cong_vao' ca.id %}" class="btn btn-success">Chấm công</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ca.giora %}
+                            {{ ca.giora|date:"H:i:s d/m/Y" }}
+                        {% else %}
+                            <a href="{% url 'cham_cong_ra' ca.id %}" class="btn btn-success">Chấm công</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
+                {% if user.chucvu == 'admin' or user.chucvu == 'quanly' %}
+                    <td>
+                        <a href="{% url 'sua_ca_lam_viec' ca.id %}" class="btn btn-warning">Sửa</a>
+                        <a href="{% url 'xoa_ca_lam_viec' ca.id %}" class="btn btn-danger" onclick="">Xóa</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">Không có ca làm việc nào</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if user.chucvu == 'admin' or user.chucvu == 'quanly' %}
+<a href="{% url 'nhanvientrongca' %}">Danh sách nhân viên trong ca</a>
+{% endif %}
+
+{% endblock content %}

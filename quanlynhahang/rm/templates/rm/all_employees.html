@@ -1,0 +1,188 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    /* Tiêu đề */
+    h1 {
+        text-align: center;
+        font-size: 28px;
+        margin: 20px 0;
+        color: #333;
+    }
+
+    /* Form tìm kiếm */
+    .search-form {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .search-form input {
+        width: 300px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .search-form button {
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .search-form button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Bảng */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 16px;
+        text-align: left;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table th, table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f4f4f4;
+        color: #333;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    table tbody tr {
+        background-color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .highlight {
+        background-color: #d4edda !important;
+        font-weight: bold;
+    }
+
+    .btn-add {
+        display: inline-block;
+        margin: 10px 0;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    .btn-add:hover {
+        background-color: #218838;
+    }
+
+    /* Nút hành động */
+    .action-link {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 8px;
+    }
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+    .action-delete {
+        color: #dc3545;
+        text-decoration: none;
+    }
+
+    .action-delete:hover {
+        text-decoration: underline;
+    }
+
+    button {
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+</style>
+
+<h1>Danh sách tất cả nhân viên</h1>
+
+<div class="search-form">
+    <form method="get" action="{% url 'search_nhanvien_view' %}">
+        <input type="text" name="q" placeholder="Tìm kiếm nhân viên" value="{{ query }}">
+        <button type="submit">Tìm kiếm</button>
+    </form>
+</div>
+
+{% if user.chucvu == 'admin' or user.chucvu == 'quanly' %}
+<div style="text-align: center;">
+    <a href="{% url 'add_employee' %}" class="btn-add">Thêm nhân viên</a>
+</div>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã NV</th>
+            <th>Họ và tên</th>
+            <th>Email</th>
+            <th>Chức vụ</th>
+            {% if user.chucvu == 'admin' %}
+                <th>Hành động</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in employees %}
+        <tr {% if employee.username == user.username %} class="highlight" {% endif %}>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ employee.username }}</td>
+            <td>
+                {{ employee.first_name }} {{ employee.last_name }}
+                {% if employee.username == user.username and employee.chucvu in 'phucvu,bep' %}
+                    <a href="{% url 'calamviec_nv' employee.pk %}" class="action-link">Xem giờ công</a>
+                {% elif employee.chucvu != 'admin' and employee.chucvu != 'quanly' and user.chucvu in 'admin,quanly'%}
+                    <a href="{% url 'calamviec_nv' employee.pk %}" class="action-link">Xem giờ công</a>
+                {% endif %}
+            </td>
+            <td>{{ employee.email }}</td>
+            <td>{{ employee.get_chucvu_display }}</td>
+            {% if user.chucvu == 'admin' %}
+            <td>
+                <a href="{% url 'edit_employee' employee.pk %}" class="action-link">Sửa</a>
+                <form action="{% url 'delete_employee' employee.pk %}" method="post" style="display: inline;" onsubmit="return confirm('Bạn có chắc muốn xóa nhân viên này không?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">Xóa</button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

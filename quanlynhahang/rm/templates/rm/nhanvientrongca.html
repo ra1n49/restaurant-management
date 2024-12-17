@@ -1,0 +1,46 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    h1 {text-align: center;}
+    table {
+        width: 80%;
+        margin: 0 auto;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+
+</style>
+<h1>Danh sách nhân viên đang trong ca</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Tên Nhân Viên</th>
+                <th>Chức Vụ</th>
+                <th>Ngày</th>
+                <th>Ca</th>
+                <th>Giờ Vào</th>
+                <th>Giờ Ra</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lich in nvtrongca %}
+                <tr>
+                    <td>{{ lich.nhanvien.get_full_name }}</td>
+                    <td>{{ lich.nhanvien.chucvu }}</td>
+                    <td>{{ lich.ngay }}</td>
+                    <td>{{ lich.ca }}</td>
+                    <td>{{ lich.giovao|default:"Chưa chấm công" }}</td>
+                    <td>{{ lich.giora|default:"Chưa chấm công" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

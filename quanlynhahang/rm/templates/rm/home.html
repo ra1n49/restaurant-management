@@ -1,0 +1,90 @@
+{% extends 'rm/base.html' %}
+
+{% block content %}
+<style>
+    /* Tổng quan */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Tiêu đề */
+    h1 {
+        text-align: center;
+        font-size: 28px;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    h1.welcome {
+        font-weight: bold;
+        color: #007bff; /* Màu xanh làm nổi bật */
+        margin-bottom: 10px;
+    }
+
+    /* Hộp chứa thông báo */
+    .messages {
+        width: 90%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 10px;
+        list-style: none;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .messages li {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .messages li:last-child {
+        border-bottom: none; /* Xóa đường kẻ dưới mục cuối cùng */
+    }
+
+    /* Thông báo theo loại */
+    .messages li.success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+
+    .messages li.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+
+    .messages li.info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border-left: 4px solid #17a2b8;
+    }
+
+    .messages li.warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border-left: 4px solid #ffc107;
+    }
+</style>
+
+<div class="content-container">
+    <h1 class="welcome">Chào mừng trở lại</h1>
+    <h1>{{ user.get_full_name }} - {{ user.get_chucvu_display }}</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock content %}
